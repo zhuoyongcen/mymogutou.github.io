@@ -1,66 +1,155 @@
-<!DOCTYPE HTML>
-<html>
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
 <head>
-<meta charset="utf-8">
-<title>A Gift to My Lover</title>
-<link rel="stylesheet" type="text/css" href="lib/font-awesome/css/font-awesome.min.css">
-<link rel="stylesheet" type="text/css" href="lib/vegas/dist/vegas.min.css">
-<link rel="stylesheet" type="text/css" href="index.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>我与大头</title>
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            font-family: Helvetica Neue, Helvetica, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+            background-image: url('bg.jpg');
+            font-size: 85%;
+            margin: 0;
+        }
+        
+        h2 {
+            font-size: 220%;
+            font-weight: 400;
+        }
+        
+        .content {
+            position: absolute;
+            width: 100%;
+            top: 40%;
+            transform: translate(0, -50%);
+            text-align: center;
+        }
+        
+        .timer {
+            font-size: 180%;
+            line-height: 1.5;
+            margin: 1em 0;
+        }
+        
+        .timer b {
+            color: rgb(253, 99, 125);
+        }
+    </style>
 </head>
 
 <body>
-  <div class="toolbar">
-    <a id="first">
-      <i class="fa fa-fw fa-step-backward"></i>
-    </a>
-    <a id="previous">
-      <i class="fa fa-fw fa-backward"></i>
-    </a>
-    <a id="play">
-      <i class="fa fa-fw fa-play"></i>
-    </a>
-    <a id="pause">
-      <i class="fa fa-fw fa-pause"></i>
-    </a>
-    <a id="next">
-      <i class="fa fa-fw fa-forward"></i>
-    </a>
-    <a id="last">
-      <i class="fa fa-fw fa-step-forward "></i>
-    </a>
-    <a id="volume-on">
-      <i class="fa fa-fw fa-volume-up"></i>
-    </a>
-    <a id="volume-off">
-      <i class="fa fa-fw fa-volume-off"></i>
-    </a>
-    <a id="enter-fullscreen">
-      <i class="fa fa-fw fa-arrows-alt"></i>
-    </a>
-    <a id="exit-fullscreen">
-      <i class="fa fa-fw fa-times"></i>
-    </a>
-  </div>
-  <div class="counter">
-    <span id="counter"></span>
-  </div>
-  <div class="loading-container">
-    <div class="loading-inner">
-      <div class="loading">
-        <div class="message" id="loading-message"></div>
-        <div class="indicator" id="loading-indicator"></div>
-      </div>
+    <canvas id='cavs' style='position:fixed; z-index:-1;'></canvas>
+    <div class="content">
+        <h2>小可爱，我们已经在一起了</h2>
+        <div class="timer">
+            <b id="d"></b> Days <b id="h"></b> Hours <b id="m"></b> Minutes <b id="s"></b> Seconds 
+        </div>
     </div>
-  </div>
+    <script>function timer() {
+            var start = new Date(2017, 10, 15); // 2015.7.2
+            var t = new Date() - start;
+            var h = ~~(t / 1000 / 60 / 60 % 24);
+            if (h < 10) {
+                h = "0" + h;
+            }
+            var m = ~~(t / 1000 / 60 % 60);
+            if (m < 10) {
+                m = "0" + m;
+            }
+
+            var s = ~~(t / 1000 % 60);
+            if (s < 10) {
+                s = "0" + s;
+            }
+            document.getElementById('d').innerHTML = ~~(t / 1000 / 60 / 60 / 24);
+            document.getElementById('h').innerHTML = h;
+            document.getElementById('m').innerHTML = m;
+            document.getElementById('s').innerHTML = s;
+        }
+        timer();
+        setInterval(timer, 1000);</script>
 </body>
-<script src="lib/jquery/dist/jquery.min.js"></script>
-<script src="lib/vegas/dist/vegas.min.js"></script>
-<script src="lib/buzz/dist/buzz.min.js"></script>
-<script src="lib/progressbar.js/dist/progressbar.min.js"></script>
-<script src="lib/sequence/sequence.js"></script>
-<script src="lib/join/join.js"></script>
-<script src="./config.js"></script>
-<script src="./fullscreen.js"></script>
-<script src="./music_player.js"></script>
-<script src="./index.js"></script>
+
 </html>
+<script type="text/javascript">
+var canvas = document.getElementById("cavs");
+const WIDTH = window.innerWidth;
+const HEIGHT = window.innerHeight;
+canvas.setAttribute("width", WIDTH);
+canvas.setAttribute("height", HEIGHT);
+var context = canvas.getContext("2d");
+var start =
+{
+    loves: [],
+    DURATION: 30,
+    begin: function()
+    {
+        this.createLove();
+    },
+    createLove: function()
+    {
+        for (var i = 0; i < WIDTH / 59; i++)
+        {
+            var love = new Love();
+            this.loves.push(love);
+        }
+        setInterval(this.drawLove.bind(this), this.DURATION);
+    },
+    drawLove: function()
+    {
+        context.clearRect(0, 0, WIDTH, HEIGHT);
+        for (var key in this.loves)
+        {
+            this.loves[key].draw();
+        }
+    }
+}
+function Love()
+{
+    var me = this;
+    function rand()
+    {
+        me.maxScale = (Math.random() * 3.2 + 1.2) * WIDTH / 521;
+        me.curScale = 1.2 * WIDTH / 521;
+        me.x = Math.floor(Math.random() * WIDTH - 40);
+        me.y = Math.floor(HEIGHT - Math.random() * 200);
+        me.ColR = Math.floor(Math.random() * 255);
+        me.ColG = Math.floor(Math.random() * 255);
+        me.ColB = Math.floor(Math.random() * 255);
+        me.alpha = Math.random() * 0.2 + 0.8;
+        me.vector = Math.random() * 5 + 0.4;
+    }
+    (function(){rand();} ());
+    me.draw = function()
+    {
+        if (me.alpha < 0.01) rand();
+        if(me.curScale < me.maxScale) me.curScale += 0.3;
+        x = me.x;
+        y = me.y;
+        scale = me.curScale;
+        context.fillStyle = "rgba(" + me.ColR + "," + me.ColG + "," + me.ColB + "," + me.alpha + ")";
+        context.shadowBlur = 10;
+        context.shadowColor = "rgb(" + me.ColR + "," + me.ColG + "," + me.ColB + ")";
+        context.beginPath();
+        context.bezierCurveTo( x + 2.5*scale, y + 2.5*scale, x + 2.0*scale, y, x, y );
+        context.bezierCurveTo( x - 3.0*scale, y, x - 3.0*scale, y + 3.5*scale,x - 3.0*scale,y + 3.5*scale );
+        context.bezierCurveTo( x - 3.0*scale, y + 5.5*scale, x - 1.0*scale, y + 7.7*scale, x + 2.5*scale, y + 9.5*scale );
+        context.bezierCurveTo( x + 6.0*scale, y + 7.7*scale, x + 8.0*scale, y + 5.5*scale, x + 8.0*scale, y + 3.5*scale );
+        context.bezierCurveTo( x + 8.0*scale, y + 3.5*scale, x + 8.0*scale, y, x + 5.0*scale, y );
+        context.bezierCurveTo( x + 3.5*scale, y, x + 2.5*scale, y + 2.5*scale, x + 2.5*scale, y + 2.5*scale );
+        context.fill();
+        context.closePath();
+        me.y -= me.vector;
+        me.alpha -= (me.vector / 2.9 * 3.5 / HEIGHT);
+    }
+}
+window.onload = function()
+{
+    start.begin();
+}
+</script>
